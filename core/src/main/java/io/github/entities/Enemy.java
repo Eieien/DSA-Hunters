@@ -26,6 +26,7 @@ public class Enemy extends Entity {
 
         body.createFixture(fixtureDef);
         body.setFixedRotation(true);
+        body.setUserData("enemy");
         shape.dispose();
 
         velocity.set(0, 0);

@@ -58,7 +58,7 @@ public class Entity {
         UpdateSpritePosition();
         sprite.setSize(size, size);
         // texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        body.setUserData(this);
+        // body.setUserData(this);
 
     }
 

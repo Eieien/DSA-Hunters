@@ -14,7 +14,7 @@ public class Wall extends Entity {
         wallShape = new PolygonShape();
         wallShape.setAsBox(sprite.getWidth() / 2, sprite.getHeight() /2);
 
-        body.createFixture(wallShape, 0);
+        body.createFixture(wallShape, 0).setUserData("Wall");;
         wallShape.dispose();
         System.out.println("Wall: " + getPosition().x + ", " + getPosition().y);
         

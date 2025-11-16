@@ -21,7 +21,6 @@ public class Bullet extends Entity {
         fixtureDef.density =1f;
         fixtureDef.restitution = 0.2f;
         fixtureDef.friction = 0f;
-        
         body.createFixture(fixtureDef);
 
         shape.dispose();

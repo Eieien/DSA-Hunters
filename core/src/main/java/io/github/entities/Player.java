@@ -29,7 +29,7 @@ public class Player extends Entity {
         fixtureDef.friction = 0.4f; // How slippery it is
         fixtureDef.restitution = 0f; // bounce
 
-        body.createFixture(fixtureDef);
+        body.createFixture(fixtureDef).setUserData("Player");
         body.setFixedRotation(true);
         shape.dispose();
 
