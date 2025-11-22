@@ -38,12 +38,14 @@ public class CharacterController {
         Vector3 worldCoordinates = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(worldCoordinates);
         Vector2 mousePosition = new Vector2(worldCoordinates.x, worldCoordinates.y);
+        
         // float angleRadians = MathUtils.atan2(mousePosition.x - player.position.y , mousePosition.y - player.position.x );
         // float angleDeg = angleRadians * MathUtils.radiansToDegrees;
         // System.out.println("X: " + mousePosition.x +  " Y: " + mousePosition.y);
         // System.out.println("Player X: " + player.position.x +  " Player Y: " + player.position.y);
         // System.out.println("DEG: " + angleDeg);
         // player.sprite.setRotation(-angleDeg);
+
         Vector2 centerPos = new Vector2(player.getPosition().x, player.getPosition().y);
         Vector2 direction = mousePosition.sub(centerPos).nor();
         float mouseAngle = direction.angleDeg();
@@ -55,7 +57,7 @@ public class CharacterController {
         Vector3 worldCoordinates = CameraController.getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         Vector2 mousePos = new Vector2(worldCoordinates.x, worldCoordinates.y);
         Vector2 direction = mousePos.sub(player.getPosition()).nor();
-        float offsetDistance = 1.2f;
+        float offsetDistance = 0.7f;
         Vector2 shootPoint = player.getPosition().cpy().add(direction.scl(offsetDistance));
         player.gun.Shoot(direction, shootPoint);
     }

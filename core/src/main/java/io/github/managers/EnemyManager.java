@@ -12,11 +12,11 @@ import io.github.entities.Player;
 
 public class EnemyManager {
     
-    private final Array<Enemy> enemies;
     private float timePerSpawn = 0f;
     private float spawnRate = 0.5f;
     private Player player;
     private boolean isSpawned = false;
+    public static Array<Enemy> enemies;
     
     public EnemyManager(Player player){
         enemies = new Array<>();
@@ -53,7 +53,6 @@ public class EnemyManager {
                 e.gun.Shoot(e.getTargetDirection(player.getPosition()), e.getPosition().cpy().add(e.getTargetDirection(player.getPosition()).scl(1.2f)));
                 // System.out.println("Player within range");
             }
-            e.gun.renderBullets(batch);
             e.render(batch);
         }
     }

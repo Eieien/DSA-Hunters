@@ -24,9 +24,8 @@ public class Enemy extends Entity {
         fixtureDef.friction = 0f;
         fixtureDef.restitution = 0f;
 
-        body.createFixture(fixtureDef);
+        body.createFixture(fixtureDef).setUserData(this);
         body.setFixedRotation(true);
-        body.setUserData("enemy");
         shape.dispose();
 
         velocity.set(0, 0);
@@ -38,7 +37,7 @@ public class Enemy extends Entity {
     public void Follow(Vector2 target){
         float delta = Gdx.graphics.getDeltaTime();
         Vector2 direction = target.sub(getPosition()).nor();
-        Vector2 impulse = direction.scl(2f);
+        Vector2 impulse = direction.scl(5f);
         // body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
         body.setLinearVelocity(impulse);
     }

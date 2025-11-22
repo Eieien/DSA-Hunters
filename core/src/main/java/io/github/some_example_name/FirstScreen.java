@@ -15,6 +15,7 @@ import io.github.entities.Player;
 import io.github.entities.Wall;
 import io.github.managers.EnemyManager;
 import io.github.managers.WorldManager;
+import io.github.pools.BulletPool;
 /** First screen of the application. Displayed after the application is created. */
 public class FirstScreen implements Screen {
 
@@ -35,11 +36,11 @@ public class FirstScreen implements Screen {
         // Prepare your screen here.
         WorldManager.Initialize();
         CameraController.Initialize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
-        
+        BulletPool.Initialize();
         batch = new SpriteBatch();
         debugRenderer = new Box2DDebugRenderer();
         player = new Player(0, 0, WorldManager.getWorld());
-        wall = new Wall(new Vector2(10f, 10f));
+        // wall = new Wall(new Vector2(10f, 10f));
         playerController = new CharacterController(player);
         enemyManager = new EnemyManager(player);
    
@@ -73,6 +74,7 @@ public class FirstScreen implements Screen {
     private void logic(){
         float delta = Gdx.graphics.getDeltaTime();
         WorldManager.Update(delta);
+        WorldManager.destroyBodies();
         CameraController.Follow(player.getPosition());
 
         if(player.gun.getOnCooldown()){
@@ -80,12 +82,13 @@ public class FirstScreen implements Screen {
             player.gun.GunDelay(delta);
         }
 
+        
         enemyManager.Spawn(delta);
 
     }
 
     private void draw(){
-        ScreenUtils.clear(Color.BLUE);
+        ScreenUtils.clear(Color.valueOf("0f0d0f"));
         // Color.valueOf("0f0d0f")
         CameraController.getViewport().apply();
 
@@ -93,8 +96,7 @@ public class FirstScreen implements Screen {
         batch.begin();
         playerController.RotateSprite(CameraController.getCamera());
         playerController.Draw(batch);
-        wall.Draw(batch);
-        player.gun.renderBullets(batch);
+        BulletPool.renderBullets(batch);
         enemyManager.render(batch);
 
 

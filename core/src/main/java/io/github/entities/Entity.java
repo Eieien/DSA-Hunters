@@ -18,8 +18,6 @@ public class Entity {
     public BodyDef bodyDef;
     public Body body;
 
-
-    
     public Entity(float x, float y, String bodyType, String spriteImage, float size, boolean isBullet){
 
         // Collider Setup
@@ -73,6 +71,10 @@ public class Entity {
 
     public void dispose(){
         texture.dispose();
+    }
+
+    public Body getBody(){
+        return body;
     }
 
 

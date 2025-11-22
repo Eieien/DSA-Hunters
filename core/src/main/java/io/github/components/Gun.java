@@ -1,15 +1,14 @@
 package io.github.components;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
+import io.github.controllers.CameraController;
 import io.github.entities.Bullet;
+import io.github.pools.BulletPool;
 
 public class Gun {
     
-    private final Array<Bullet> bullets;
     public float fireRate;
     private final int bulletsPerShot;
     
@@ -19,7 +18,6 @@ public class Gun {
     float burstDelay = 0f;
     
     public Gun(float fireRate, float damage, float bulletSpread, int bulletsPerShot){
-        bullets = new Array<>();
         this.fireRate = fireRate;
         this.bulletsPerShot = bulletsPerShot;
     }
@@ -31,15 +29,15 @@ public class Gun {
 
             for(int i = bulletsPerShot; i > 0; ){
                 if(burstDelay <= 0){
-                    bullets.add(new Bullet(shootPoint, direction));
+                    BulletPool.bullets.add(new Bullet(shootPoint, direction));
                     burstDelay = 1.5f;
                     i--;
                     // System.out.println("Shoot");
                 }else{
                     burstDelay -= delta;
                     // System.out.println("Delaying");
-
                 }
+                
             }
             
             fireDelay = fireRate;
@@ -66,9 +64,5 @@ public class Gun {
         return fireDelay > 0;
     }
 
-    public void renderBullets(SpriteBatch batch){
-        for(Bullet b: bullets){
-            b.render(batch);
-        }
-    }
+
 }
