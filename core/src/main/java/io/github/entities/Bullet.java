@@ -6,19 +6,21 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
+import io.github.components.BulletData;
 import io.github.managers.WorldManager;
 import io.github.pools.BulletPool;
 
 
 public class Bullet extends Entity {
     
-    public float x, y, bulletSpeed;
+    public float x, y;
     public float timeToLive = 15f;
-    boolean dead;
+    public BulletData data;
 
-    public Bullet(Vector2 position, Vector2 direction){
-        super(position.x, position.y, "Dynamic" , "bullet.png", 1f, true);
-        dead = false;
+    public Bullet(Vector2 position, Vector2 direction, BulletData bulletData){
+        super(position.x, position.y, "Dynamic" , "sprites/bullet.png", 1f, true);
+        this.data = bulletData;
+        
         CircleShape shape = new CircleShape();
         shape.setRadius(0.1f);
 
@@ -31,21 +33,14 @@ public class Bullet extends Entity {
 
         shape.dispose();
         
-        Vector2 impulse = direction.scl(2f);
+        Vector2 impulse = direction.scl(bulletData.bulletSpeed);
 
         // System.out.println(direction);
         body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
         sprite.setOriginCenter();
-        sprite.setRotation(direction.angleDeg() + 90);
+        sprite.setRotation(direction.angleDeg() - 90);
         UpdateSpritePosition();
-    }
-
-    public boolean isDead(){
-        return dead;
-    }
-
-    public void kill(){
-        dead = true;
+        
     }
 
     public void render(SpriteBatch batch){

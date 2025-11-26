@@ -48,11 +48,15 @@ public class EnemyManager {
             if(e.gun.getOnCooldown()){
                 e.gun.GunDelay(delta);
             }
-            
+            e.facePlayer(player.getPosition());
             if(e.getPosition().dst(player.getPosition()) < 10 && !e.gun.getOnCooldown()){
                 e.gun.Shoot(e.getTargetDirection(player.getPosition()), e.getPosition().cpy().add(e.getTargetDirection(player.getPosition()).scl(1.2f)));
                 // System.out.println("Player within range");
+                AudioManager.i().playSfx("shoot");
+
             }
+
+            if(e.getIsInvinsible()) e.invinsibilityFrames(1f, Gdx.graphics.getDeltaTime());
             e.render(batch);
         }
     }

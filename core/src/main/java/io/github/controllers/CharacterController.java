@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import io.github.entities.Player;
+import io.github.managers.AudioManager;
 
 public class CharacterController {
     
@@ -59,7 +60,9 @@ public class CharacterController {
         Vector2 direction = mousePos.sub(player.getPosition()).nor();
         float offsetDistance = 0.7f;
         Vector2 shootPoint = player.getPosition().cpy().add(direction.scl(offsetDistance));
+        if(!player.gun.getOnCooldown()) AudioManager.i().playSfx("shoot");
         player.gun.Shoot(direction, shootPoint);
+        
     }
 
     public void Draw(SpriteBatch batch){
@@ -76,6 +79,7 @@ public class CharacterController {
 
         player.UpdateSpritePosition();
         player.sprite.draw(batch);
+        if(player.getIsInvinsible()) player.invinsibilityFrames(0.5f, Gdx.graphics.getDeltaTime());
     }
     
 }

@@ -3,7 +3,6 @@ package io.github.components;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.controllers.CameraController;
 import io.github.entities.Bullet;
 import io.github.pools.BulletPool;
 
@@ -11,15 +10,21 @@ public class Gun {
     
     public float fireRate;
     private final int bulletsPerShot;
-    
+    private BulletData bulletData;
+
     private boolean onCooldown;
+    private float bulletSpeed;
+    private float damage;
     
     float fireDelay = 0f;
     float burstDelay = 0f;
     
-    public Gun(float fireRate, float damage, float bulletSpread, int bulletsPerShot){
+    public Gun(float fireRate, float bulletSpeed, float damage, float bulletSpread, int bulletsPerShot){
         this.fireRate = fireRate;
+        this.damage = damage;
         this.bulletsPerShot = bulletsPerShot;
+
+        this.bulletData = new BulletData(bulletSpeed, 15f, damage, bulletSpread);
     }
 
     public void Shoot(Vector2 direction, Vector2 shootPoint){
@@ -29,20 +34,18 @@ public class Gun {
 
             for(int i = bulletsPerShot; i > 0; ){
                 if(burstDelay <= 0){
-                    BulletPool.bullets.add(new Bullet(shootPoint, direction));
+                    BulletPool.bullets.add(new Bullet(shootPoint, direction, bulletData));
                     burstDelay = 1.5f;
                     i--;
-                    // System.out.println("Shoot");
+
                 }else{
                     burstDelay -= delta;
-                    // System.out.println("Delaying");
                 }
                 
             }
             
             fireDelay = fireRate;
             onCooldown = true;
-            // System.out.println("Now On Cooldown");
         }
 
     }

@@ -14,8 +14,12 @@ dependencies {
   api "com.kotcrab.vis:vis-ui:$visUiVersion"
   api "com.rafaskoberg.gdx:typing-label:$typingLabelVersion"
   api "space.earlygrey:shapedrawer:$shapeDrawerVersion"
+  api 'com.crashinvaders.vfx:gdx-vfx-core:0.5.4'
+  api 'com.crashinvaders.vfx:gdx-vfx-effects:0.5.4'
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
+
   }
+
 }

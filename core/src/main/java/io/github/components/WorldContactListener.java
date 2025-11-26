@@ -1,5 +1,6 @@
 package io.github.components;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -10,6 +11,7 @@ import io.github.controllers.CameraController;
 import io.github.entities.Bullet;
 import io.github.entities.Enemy;
 import io.github.entities.Player;
+import io.github.managers.AudioManager;
 import io.github.managers.EnemyManager;
 import io.github.managers.WorldManager;
 import io.github.pools.BulletPool;
@@ -69,21 +71,49 @@ public class WorldContactListener implements ContactListener {
         if(bullet.isDead()) return;
         
         bullet.kill();
-
         bullet.texture.dispose();
         BulletPool.bullets.removeValue(bullet, true);
         WorldManager.addToDestroyBodies((bullet).getBody());
         
         if(other instanceof Player){
             CameraController.Shake(0.5f, 0.2f);
+            AudioManager.i().playSfx("hit");
         }
         
         if(other instanceof Enemy){
-            ((Enemy)other).texture.dispose();
-            WorldManager.addToDestroyBodies(((Enemy) other).getBody());
-            EnemyManager.enemies.removeValue((Enemy) other, true);
+            
+            Enemy e = ((Enemy) other);
+            
+            if(e.isDead()) return;
+
+            
+            e.handleDamage(bullet.data.damage);
+            knockback(bullet, e);
+            System.out.println(e.getHealth());
+
+            if(e.getHealth() <= 0){
+                ((Enemy) other).kill();
+                AudioManager.i().playSfx("enemyhit");
+    
+                ((Enemy)other).texture.dispose();
+                WorldManager.addToDestroyBodies(e.getBody());
+                EnemyManager.enemies.removeValue(e, true);
+
+            }
+
+
         }
     }
+
+    public void knockback(Bullet bullet, Enemy e){
+        Vector2 kb = new Vector2(
+            e.body.getPosition().x - bullet.body.getPosition().x,
+            e.body.getPosition().y - bullet.body.getPosition().y
+        ).nor().scl(15f);
+    
+        e.body.applyLinearImpulse(kb, e.body.getWorldCenter(), true);
+    }
+
 
 
 }

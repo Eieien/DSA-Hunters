@@ -26,8 +26,11 @@ public class CameraController {
     }
 
     public static void Follow(Vector2 target){
+        Vector3 worldCoordinates = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        Vector2 mousePos = new Vector2(worldCoordinates.x, worldCoordinates.y);
         float delta = Gdx.graphics.getDeltaTime();
         float cameraRadius = 5f;
+  
         camera.position.x += (target.x - camera.position.x) * cameraRadius * delta;
         camera.position.y += (target.y - camera.position.y) * cameraRadius * delta;
         camera.update();

@@ -16,11 +16,12 @@ public class Player extends Entity {
 
     public Player(float screenX, float screenY, World world){
         
-        super(0f, 0f, "Dynamic", "placeholder_char.png", 1f, true);
+        super(0f, 0f, "Dynamic", "sprites/placeholder_char.png", 1f, true);
         
+        setStats(100f, 30f, 15f);
         //SHape of the Collider
         CircleShape shape = new CircleShape();
-        shape.setRadius(0.5f);
+        shape.setRadius(0.3f);
         
         // Physics Behavior
         FixtureDef fixtureDef = new FixtureDef();
@@ -36,7 +37,7 @@ public class Player extends Entity {
         velocity.set(0, 0);
         acceleration.set(0, 0);
 
-        gun = new Gun(0.3f, 10f, 0.5f, 1);
+        gun = new Gun(0.3f, 2f , getBaseAtk(), 0.5f, 1);
     }
 
 }
