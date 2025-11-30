@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import io.github.components.BulletData;
+import io.github.managers.GameStateManager;
 import io.github.managers.WorldManager;
 import io.github.pools.BulletPool;
 
@@ -14,12 +15,13 @@ import io.github.pools.BulletPool;
 public class Bullet extends Entity {
     
     public float x, y;
-    public float timeToLive = 15f;
+    public float timeToLive = 5f;
     public BulletData data;
 
     public Bullet(Vector2 position, Vector2 direction, BulletData bulletData){
-        super(position.x, position.y, "Dynamic" , "sprites/bullet.png", 1f, true);
+        super(position.x, position.y, "Dynamic" , bulletData.getSprite(), 1f, true);
         this.data = bulletData;
+        this.timeToLive = bulletData.getTimeToLive();
         
         CircleShape shape = new CircleShape();
         shape.setRadius(0.1f);
@@ -29,11 +31,15 @@ public class Bullet extends Entity {
         fixtureDef.density =1f;
         fixtureDef.restitution = 0.2f;
         fixtureDef.friction = 0f;
+        fixtureDef.filter.categoryBits = CATEGORY_BULLET;
+        fixtureDef.filter.maskBits = bulletData.getCategory();
+        fixtureDef.filter.groupIndex = -1;
+        
         body.createFixture(fixtureDef).setUserData(this);
 
         shape.dispose();
         
-        Vector2 impulse = direction.scl(bulletData.bulletSpeed);
+        Vector2 impulse = direction.scl(bulletData.getBulletSpeed());
 
         // System.out.println(direction);
         body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
@@ -51,9 +57,13 @@ public class Bullet extends Entity {
         timeToLive -= delta;
 
         if(timeToLive <= 0){
-            BulletPool.bullets.removeValue(this, true);
-            WorldManager.addToDestroyBodies(body);
-            System.out.println("Bullet expired");
+            this.fadeOut(Gdx.graphics.getDeltaTime(), 10f);
+            if(getAlpha() < 0){
+                BulletPool.bullets.removeValue(this, true);
+                WorldManager.addToDestroyBodies(body);
+                System.out.println("Bullet expired");
+
+            }
         }
 
     }

@@ -12,7 +12,8 @@ public class Player extends Entity {
     public final float deACCEL = 0.80f;
     public final float MAX_SPEED = 10f;
     public Vector2 shootPoint;
-    public Gun gun;
+    public Gun gun1;
+    public Gun gun2;
 
     public Player(float screenX, float screenY, World world){
         
@@ -29,6 +30,8 @@ public class Player extends Entity {
         fixtureDef.density = 1f; // affects inertia
         fixtureDef.friction = 0.4f; // How slippery it is
         fixtureDef.restitution = 0f; // bounce
+        fixtureDef.filter.categoryBits = CATEGORY_PLAYER;
+        fixtureDef.filter.maskBits = CATEGORY_ENEMY | CATEGORY_BULLET;
 
         body.createFixture(fixtureDef).setUserData(this);
         body.setFixedRotation(true);
@@ -37,7 +40,9 @@ public class Player extends Entity {
         velocity.set(0, 0);
         acceleration.set(0, 0);
 
-        gun = new Gun(0.3f, 2f , getBaseAtk(), 0.5f, 1);
+        // gun1 = new Gun("radial", CATEGORY_ENEMY , "sprites/projectiles/bullet.png",0.3f, 2f , getBaseAtk(), 5f, 4);
+        gun2 = new Gun("standard", CATEGORY_ENEMY, "sprites/projectiles/bullet.png", 1f, 1f, getBaseAtk(), 0f, 2);
+        addGun(gun2);
     }
 
 }

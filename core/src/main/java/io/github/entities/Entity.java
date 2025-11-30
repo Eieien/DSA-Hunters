@@ -1,4 +1,5 @@
 package io.github.entities;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -6,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.utils.Array;
 
+import io.github.components.Gun;
 import io.github.managers.WorldManager;
 
 public class Entity {
@@ -23,12 +26,17 @@ public class Entity {
     public Body body;
     private boolean dead;
     private boolean isInivinsible = false;
+    private Array<Gun> guns;
+
+    public static final short CATEGORY_PLAYER = 0x0001;
+    public static final short CATEGORY_ENEMY = 0x0002;
+    public static final short CATEGORY_BULLET = 0x0003;
 
     public Entity(float x, float y, String bodyType, String spriteImage, float size, boolean isBullet){
 
         // Collider Setup
         bodyDef = new BodyDef();
-        
+        guns = new Array();
         dead = false;
 
         switch(bodyType) {
@@ -68,7 +76,14 @@ public class Entity {
 
     }
 
+    public void addGun(Gun gun){
+        guns.add(gun);
+    }
     
+    public Array<Gun> getGuns(){
+        return guns;
+    }
+
     public Vector2 getPosition() {
         return body.getPosition();
     }
@@ -87,7 +102,7 @@ public class Entity {
 
     public void handleDamage(float damage){
 
-        if(isInivinsible) System.out.println("Invisinble");
+        // if(isInivinsible) System.out.println("Invisinble");
 
         float dmg = damage * (100f / (100f + baseDefense));
 
@@ -103,6 +118,24 @@ public class Entity {
             kill();
         }
 
+    }
+
+    public void fadeOut(float delta, float fadeSpeed){
+        float alpha = sprite.getColor().a;
+        if(alpha > 0){
+            alpha -= fadeSpeed * delta;
+            sprite.setAlpha(alpha);
+        }else{
+            return;
+        }
+    }
+
+    public void setTransparency(float x){
+        sprite.setAlpha(x);
+    }
+
+    public float getAlpha(){
+        return sprite.getColor().a;
     }
 
     public void invinsibilityFrames(float amount, float delta){
@@ -121,6 +154,10 @@ public class Entity {
     public void setStats(float hp, float atk, float def){
         this.baseHealth = hp;
         this.baseAtk = atk;
+        this.baseDefense = def;
+    }
+
+    public void setDefense(float def){
         this.baseDefense = def;
     }
 

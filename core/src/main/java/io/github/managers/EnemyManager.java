@@ -7,8 +7,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import io.github.entities.Enemy;
+import io.github.components.Gun;
 import io.github.entities.Player;
+import io.github.entities.enemies.Enemy;
 
 public class EnemyManager {
     
@@ -28,10 +29,10 @@ public class EnemyManager {
         float randomFloatY = MathUtils.random(-10f, 10f);
         Vector2 playerPos = player.getPosition();
         Vector2 spawnPos = new Vector2(playerPos.x + randomFloatX, playerPos.y + randomFloatY).scl(5);
-        if(timePerSpawn <= 0f){
-            enemies.add(new Enemy(spawnPos));
+        if(timePerSpawn <= 0f ){
+            enemies.add(new Enemy(spawnPos, "sprites/memory.png"));
             timePerSpawn = spawnRate;
-            // isSpawned = true;
+            isSpawned = true;
         }else{
             timePerSpawn -= delta;
         }
@@ -45,15 +46,19 @@ public class EnemyManager {
         float delta = Gdx.graphics.getDeltaTime();
         for (Enemy e: enemies){
             e.Follow(player.getPosition());
-            if(e.gun.getOnCooldown()){
-                e.gun.GunDelay(delta);
-            }
             e.facePlayer(player.getPosition());
-            if(e.getPosition().dst(player.getPosition()) < 10 && !e.gun.getOnCooldown()){
-                e.gun.Shoot(e.getTargetDirection(player.getPosition()), e.getPosition().cpy().add(e.getTargetDirection(player.getPosition()).scl(1.2f)));
-                // System.out.println("Player within range");
-                AudioManager.i().playSfx("shoot");
 
+            
+            for(Gun gun : e.getGuns()){
+                gun.Update(delta);
+                if(gun.getOnCooldown()){
+                    gun.GunDelay(delta);
+                }
+                if(!GameStateManager.i().isGameOver() && e.getPosition().dst(player.getPosition()) < 10 && !gun.getOnCooldown()){
+                    gun.Shoot(e.getTargetDirection(player.getPosition()), e.getPosition());
+                    AudioManager.i().playSfx("shoot", 1f, 0f, 0.4f);
+                }
+                
             }
 
             if(e.getIsInvinsible()) e.invinsibilityFrames(1f, Gdx.graphics.getDeltaTime());

@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import io.github.components.Gun;
 import io.github.entities.Player;
 import io.github.managers.AudioManager;
+import io.github.managers.GameStateManager;
 
 public class CharacterController {
     
@@ -20,7 +22,6 @@ public class CharacterController {
     }
 
     public void handleInput(){
-        // float delta = Gdx.graphics.getDeltaTime();
         player.acceleration.set(0, 0);
         float ACCEL = player.ACCEL;
         if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)){player.acceleration.x = ACCEL;}
@@ -36,22 +37,17 @@ public class CharacterController {
     }
 
     public void RotateSprite(OrthographicCamera camera){
-        Vector3 worldCoordinates = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        camera.unproject(worldCoordinates);
-        Vector2 mousePosition = new Vector2(worldCoordinates.x, worldCoordinates.y);
-        
-        // float angleRadians = MathUtils.atan2(mousePosition.x - player.position.y , mousePosition.y - player.position.x );
-        // float angleDeg = angleRadians * MathUtils.radiansToDegrees;
-        // System.out.println("X: " + mousePosition.x +  " Y: " + mousePosition.y);
-        // System.out.println("Player X: " + player.position.x +  " Player Y: " + player.position.y);
-        // System.out.println("DEG: " + angleDeg);
-        // player.sprite.setRotation(-angleDeg);
+        if(!GameStateManager.i().isGameOver()){
+            Vector3 worldCoordinates = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(worldCoordinates);
+            Vector2 mousePosition = new Vector2(worldCoordinates.x, worldCoordinates.y);
+            Vector2 centerPos = new Vector2(player.getPosition().x, player.getPosition().y);
+            Vector2 direction = mousePosition.sub(centerPos).nor();
+            float mouseAngle = direction.angleDeg();
+            player.sprite.setOriginCenter();
+            player.sprite.setRotation(mouseAngle - 90);
 
-        Vector2 centerPos = new Vector2(player.getPosition().x, player.getPosition().y);
-        Vector2 direction = mousePosition.sub(centerPos).nor();
-        float mouseAngle = direction.angleDeg();
-        player.sprite.setOriginCenter();
-        player.sprite.setRotation(mouseAngle - 90);
+        }
     }
 
     public void Shoot(){
@@ -60,13 +56,15 @@ public class CharacterController {
         Vector2 direction = mousePos.sub(player.getPosition()).nor();
         float offsetDistance = 0.7f;
         Vector2 shootPoint = player.getPosition().cpy().add(direction.scl(offsetDistance));
-        if(!player.gun.getOnCooldown()) AudioManager.i().playSfx("shoot");
-        player.gun.Shoot(direction, shootPoint);
+        for(Gun gun : player.getGuns()){
+            if(!gun.getOnCooldown()) AudioManager.i().playSfx("shoot", 1f, 0f, 0.4f);
+            gun.Shoot(direction, shootPoint);
+
+        }
         
     }
 
-    public void Draw(SpriteBatch batch){
-        float delta = Gdx.graphics.getDeltaTime();
+    public void Draw(SpriteBatch batch, float delta){
 
         Vector2 vel = player.velocity;
         Vector2 pos = player.getPosition();
@@ -79,7 +77,7 @@ public class CharacterController {
 
         player.UpdateSpritePosition();
         player.sprite.draw(batch);
-        if(player.getIsInvinsible()) player.invinsibilityFrames(0.5f, Gdx.graphics.getDeltaTime());
+        // if(player.getIsInvinsible()) player.invinsibilityFrames(0.5f, Gdx.graphics.getDeltaTime());
     }
     
 }

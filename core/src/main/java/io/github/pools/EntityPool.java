@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 
 import io.github.entities.Bullet;
-import io.github.entities.Enemy;
+import io.github.entities.enemies.Enemy;
 
 public class EntityPool {
     

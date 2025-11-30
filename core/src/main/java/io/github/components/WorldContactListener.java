@@ -9,10 +9,11 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 
 import io.github.controllers.CameraController;
 import io.github.entities.Bullet;
-import io.github.entities.Enemy;
 import io.github.entities.Player;
+import io.github.entities.enemies.Enemy;
 import io.github.managers.AudioManager;
 import io.github.managers.EnemyManager;
+import io.github.managers.GameStateManager;
 import io.github.managers.WorldManager;
 import io.github.pools.BulletPool;
 
@@ -69,17 +70,29 @@ public class WorldContactListener implements ContactListener {
     private void handleBulletHit(Bullet bullet, Object other){
 
         if(bullet.isDead()) return;
-        
+     
         bullet.kill();
         bullet.texture.dispose();
         BulletPool.bullets.removeValue(bullet, true);
         WorldManager.addToDestroyBodies((bullet).getBody());
         
         if(other instanceof Player){
+            
+            Player p = ((Player) other);
+            
             CameraController.Shake(0.5f, 0.2f);
             AudioManager.i().playSfx("hit");
+
+            p.handleDamage(bullet.data.getDamage());
+
+            if(p.getHealth() <= 0){
+                GameStateManager.i().setGameOver();
+            }
+
+
         }
         
+
         if(other instanceof Enemy){
             
             Enemy e = ((Enemy) other);
@@ -87,7 +100,7 @@ public class WorldContactListener implements ContactListener {
             if(e.isDead()) return;
 
             
-            e.handleDamage(bullet.data.damage);
+            e.handleDamage(bullet.data.getDamage());
             knockback(bullet, e);
             System.out.println(e.getHealth());
 
@@ -101,7 +114,6 @@ public class WorldContactListener implements ContactListener {
 
             }
 
-
         }
     }
 
@@ -109,7 +121,7 @@ public class WorldContactListener implements ContactListener {
         Vector2 kb = new Vector2(
             e.body.getPosition().x - bullet.body.getPosition().x,
             e.body.getPosition().y - bullet.body.getPosition().y
-        ).nor().scl(15f);
+        ).nor().scl(5f);
     
         e.body.applyLinearImpulse(kb, e.body.getWorldCenter(), true);
     }
